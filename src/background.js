@@ -30,7 +30,7 @@ chrome.runtime.onMessage.addListener(
             return;
         }
 
-        if (request.task === 'lastOperation') {
+        if (request.task === 'lastRequest') {
             sendResponse({ "videoId": lastPlayedVideoId, "requests": results });
             return;
         }

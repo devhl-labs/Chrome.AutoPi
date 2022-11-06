@@ -28,10 +28,10 @@ window.addEventListener('click', function (e) {
     }
 })
 
-chrome.runtime.sendMessage({ task: 'lastOperation' }, function (lastOperation) {
-    document.getElementById("videoId").innerText = lastOperation.videoId;
-    if (lastOperation.requests.length > 0) {
-        document.getElementById("notification").innerText = lastOperation.requests[0].response.result;
-        document.getElementById("play").innerText = lastOperation.requests[1].response.result;
+chrome.runtime.sendMessage({ task: 'lastRequest' }, function (lastRequest) {
+    document.getElementById("videoId").innerText = lastRequest.videoId;
+    if (lastRequest.requests.length > 0) {
+        document.getElementById("notification").innerText = lastRequest.requests[0].response.result;
+        document.getElementById("play").innerText = lastRequest.requests[1].response.result;
     }
 });
