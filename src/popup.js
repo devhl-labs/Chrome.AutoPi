@@ -25,5 +25,10 @@ document.getElementById("btnSubmit").addEventListener("click", function () {
     localStorage['enabled'] = document.getElementById('enabled').checked
         ? 'true'
         : 'false';
-    chrome.runtime.sendMessage({ task: 'save' });
+
+    console.log("Sending request to save information.");
+
+    chrome.runtime.sendMessage({ task: 'save' }, function (response) {
+        console.log(`Received response of ${response.farewell}`);
+    });
 });

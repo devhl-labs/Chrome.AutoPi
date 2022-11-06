@@ -38,9 +38,15 @@ let enabled;
 config();
 
 function config() {
-    if (!localStorage['ip']) localStorage['ip'] = '192.168.1.3';
-    if (!localStorage['port']) localStorage['port'] = '80';
-    if (!localStorage['enabled']) localStorage['enabled'] = 'true';
+    if (!localStorage['ip']) {
+        localStorage['ip'] = '192.168.1.3';
+    }
+    if (!localStorage['port']) {
+        localStorage['port'] = '80';
+    }
+    if (!localStorage['enabled']) {
+        localStorage['enabled'] = 'true';
+    }
 
     ip = localStorage['ip'];
     port = localStorage['port'];
@@ -49,7 +55,7 @@ function config() {
 
 chrome.runtime.onMessage.addListener(
     function (request, sender, sendResponse) {
-        console.log("Message recieved");
+        console.log(`Message recieved: ${JSON.stringify(request)}`);
 
         if (request.task === 'save') {
             config();
@@ -57,12 +63,16 @@ chrome.runtime.onMessage.addListener(
             return;
         }
 
-        if (enabled === 'false') return;
+        if (enabled === 'false') {
+            return;
+        }
 
         let videoId = GetVideoId(request.location);
-        if (videoId.length === 0) return;
+        if (!videoId) {
+            return;
+        }
 
-        console.log(`Player vide id: ${videoId}`);
+        console.log(`Player video id: ${videoId}`);
 
         //create message on chrome
         //let messageId = '';
@@ -76,7 +86,17 @@ chrome.runtime.onMessage.addListener(
         //};
 
         //send message to xbmc
-        let showNotification = { "jsonrpc": "2.0", "method": "GUI.ShowNotification", "params": { "title": "AutoPi", "message": `Playing: ${videoId}`, "displaytime": 15000 }, "id": 1 };
+        let showNotification = {
+            "jsonrpc": "2.0",
+            "method": "GUI.ShowNotification",
+            "params": {
+                "title": "AutoPi",
+                "message": `Playing: ${videoId}`,
+                "displaytime": 15000
+            },
+            "id": 1
+        };
+
         let url = 'http://' + ip + ':' + port + '/jsonrpc';
 
         $.ajax({
@@ -95,7 +115,16 @@ chrome.runtime.onMessage.addListener(
             }
         });
 
-        let open = { "jsonrpc": "2.0", "id": 1, "method": "Player.Open", "params": { "item": { "file": `plugin://plugin.video.youtube/?path=/root/video&action=play_video&videoid=${videoId}` } } };
+        let open = { 
+            "jsonrpc": "2.0",
+            "id": 1,
+            "method": "Player.Open",
+            "params": {
+                "item": {
+                    "file": `plugin://plugin.video.youtube/?path=/root/video&action=play_video&videoid=${videoId}`
+                }
+            }
+        };
 
         $.ajax({
             type: "POST",
@@ -125,9 +154,7 @@ function GetVideoId(url) {
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
     let match = url.match(regExp);
 
-    if (match && match[2].length === 11) {
-        return match[2];
-    } else {
-        return ""
-    }
+    return match && match[2].length === 11
+        ? match[2]
+        : undefined
 }
