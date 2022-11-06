@@ -14,7 +14,10 @@ function requestToObject(request, response) {
 let ip;
 let port;
 let enabled;
+let lastPlayedVideoId;
 setTarget();
+
+let results = [];
 
 chrome.runtime.onMessage.addListener(
     function (request, sender, sendResponse) {
@@ -27,11 +30,18 @@ chrome.runtime.onMessage.addListener(
             return;
         }
 
+        if (request.task === 'lastOperation') {
+            sendResponse({ "videoId": lastPlayedVideoId, "requests": results });
+            return;
+        }
+
         if (enabled === 'false') {
             console.log("AutoPi is disabled, not playing the video.");
             sendResponse("AutoPi is disabled, not playing the video.");
             return;
         }
+
+        lastPlayedVideoId = request.play;
 
         const showNotification = {
             "jsonrpc": "2.0",
@@ -46,7 +56,7 @@ chrome.runtime.onMessage.addListener(
 
         const url = `http://${ip}:${port}/jsonrpc`;
 
-        const results = []
+        results = []
 
         fetch(url, {
             method: 'POST',

@@ -17,7 +17,21 @@ document.getElementById("targetForm").onsubmit = function () {
 
     console.log("Sending request to save information.");
 
-    chrome.runtime.sendMessage({ task: 'save' }, function (response) {
-        console.log(`Received response of ${response.farewell}`);
+    chrome.runtime.sendMessage({ task: 'save' }, function (task) {
+        console.log(task);
     });
 };
+
+window.addEventListener('click', function (e) {
+    if (e.target.href !== undefined) {
+        chrome.tabs.create({ url: e.target.href })
+    }
+})
+
+chrome.runtime.sendMessage({ task: 'lastOperation' }, function (lastOperation) {
+    document.getElementById("videoId").innerText = lastOperation.videoId;
+    if (lastOperation.requests.length > 0){
+        document.getElementById("notification").innerText = lastOperation.requests[0].response.result;
+        document.getElementById("play").innerText = lastOperation.requests[1].response.result;
+    }
+});
