@@ -1,6 +1,6 @@
-const ip = localStorage['ip'] ?? '192.168.1.3';
-const port = localStorage['port'] ?? '80';
-const enabled = localStorage['enabled'] ?? 'true';
+const ip = localStorage['ip'];
+const port = localStorage['port'];
+const enabled = localStorage['enabled'];
 
 document.getElementById('ip').value = ip;
 document.getElementById('port').value = port;
