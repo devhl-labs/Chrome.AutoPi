@@ -17,10 +17,12 @@ function observerCallback() {
 }
 
 function sendRequestToPlayVideo(videoId) {
-    console.log(`Requesting to play ${videoId}`);
-    chrome.runtime.sendMessage({ play: videoId }, function (response) {
-        console.log(`Received response of ${response.farewell}`);
-    });
+    if (videoId) {
+        console.log(`Requesting to play ${videoId}`);
+        chrome.runtime.sendMessage({ play: videoId }, function (response) {
+            console.log(`Received response of ${response.farewell}`);
+        });
+    }
 }
 
 function getVideoId() {
@@ -34,6 +36,4 @@ function getVideoId() {
 
 addLocationObserver(observerCallback);
 let videoId = getVideoId(document.URL);
-if (videoId) {
-    sendRequestToPlayVideo(videoId);
-}
+sendRequestToPlayVideo(videoId);
