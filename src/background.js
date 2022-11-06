@@ -48,21 +48,20 @@ chrome.runtime.onMessage.addListener(
 
         const results = []
 
-        $.ajax({
-            type: "POST",
-            url: url,
-            data: JSON.stringify(showNotification),
-            contentType: "application/json",
-            dataType: 'json',
-            error: function (response) {
-                const result = requestToObject(showNotification, response);
-                results.push(result);
-            },
-            success: function (response) {
-                const result = requestToObject(showNotification, response);
-                results.push(result);
+        fetch(url, {
+            method: 'POST',
+            body: JSON.stringify(showNotification),
+            headers: {
+                'content-type': 'application/json'
             }
-        });
+        })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(responseBodyJson) {
+                const result = requestToObject(showNotification, responseBodyJson);
+                results.push(result);
+            });
 
         const open = {
             "jsonrpc": "2.0",
@@ -75,29 +74,24 @@ chrome.runtime.onMessage.addListener(
             }
         };
 
-        $.ajax({
-            type: "POST",
-            url: url,
-            data: JSON.stringify(open),
-            contentType: "application/json",
-            dataType: 'json',
-            error: function (response) {
-                const result = requestToObject(open, response);
-                results.push(result);
-                console.log(results);
-                sendResponse(results);
-            },
-            success: function (response) {
-                const result = requestToObject(open, response);
-                results.push(result);
-                console.log(results);
-                sendResponse(results);
+        fetch(url, {
+            method: 'POST',
+            body: JSON.stringify(open),
+            headers: {
+                'content-type': 'application/json'
             }
-        });
+        })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(responseBodyJson) {
+                const result = requestToObject(open, responseBodyJson);
+                results.push(result);
+                console.log(results);
+                sendResponse(results);
+            });
 
-        // the jquery ajax call is async
-        // in order to send the result to the content script *after* the async work
-        // we must return true here
+        // we must return true here to send the result to the content script *after* the async work
         return true;
     }
 )
