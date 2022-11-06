@@ -25,7 +25,7 @@ function sendRequestToPlayVideo(videoId) {
 
 function getVideoId() {
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-    let match = document.URL.match(regExp);
+    const match = document.URL.match(regExp);
 
     return match && match[2].length === 11
         ? match[2]

@@ -46,7 +46,7 @@ chrome.runtime.onMessage.addListener(
         //};
 
         //send message to xbmc
-        let showNotification = {
+        const showNotification = {
             "jsonrpc": "2.0",
             "method": "GUI.ShowNotification",
             "params": {
@@ -75,7 +75,7 @@ chrome.runtime.onMessage.addListener(
             }
         });
 
-        let open = { 
+        const open = { 
             "jsonrpc": "2.0",
             "id": 1,
             "method": "Player.Open",
