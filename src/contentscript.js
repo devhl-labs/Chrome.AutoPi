@@ -1,5 +1,5 @@
 function addLocationObserver(callback) {
-    const config = { 
+    const config = {
         childList: true,
         subtree: true
     }
@@ -9,7 +9,6 @@ function addLocationObserver(callback) {
 }
 
 function observerCallback() {
-    console.log(`checking ${document.URL}`);
     const tempVideoId = getVideoId(document.URL);
     if (videoId != tempVideoId && window.location.href.includes('youtube')) {
         videoId = tempVideoId;
@@ -26,5 +25,4 @@ function sendRequestToPlayVideo(videoId) {
 
 let videoId = getVideoId(document.URL);
 addLocationObserver(observerCallback);
-observerCallback();
 sendRequestToPlayVideo(videoId);
