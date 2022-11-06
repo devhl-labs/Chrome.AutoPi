@@ -18,7 +18,7 @@ setTarget();
 
 chrome.runtime.onMessage.addListener(
     function (request, sender, sendResponse) {
-        console.log(JSON.stringify(request));
+        console.log(request);
 
         if (request.task === 'save') {
             setTarget();
