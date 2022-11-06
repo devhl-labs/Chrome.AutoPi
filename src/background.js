@@ -14,12 +14,11 @@ function requestToObject(request, response) {
 let ip;
 let port;
 let enabled;
-
 setTarget();
 
 chrome.runtime.onMessage.addListener(
     function (request, sender, sendResponse) {
-        console.log(`Message recieved: ${JSON.stringify(request)}`);
+        console.log(JSON.stringify(request));
 
         if (request.task === 'save') {
             setTarget();
@@ -33,17 +32,6 @@ chrome.runtime.onMessage.addListener(
             sendResponse("AutoPi is disabled, not playing the video.");
             return;
         }
-
-        //create message on chrome
-        //let messageId = '';
-        //let opt = {
-        //    type: 'list',
-        //    title: 'AutoPi',
-        //    message: 'Playing Video',
-        //    priority: 1,
-        //    items: [{ title: 'Playing:  ', message: videoId}],
-        //    iconUrl:'APi128NoGradient.png'
-        //};
 
         const showNotification = {
             "jsonrpc": "2.0",
@@ -98,16 +86,12 @@ chrome.runtime.onMessage.addListener(
                 results.push(result);
                 console.log(results);
                 sendResponse(results);
-                // //opt.message = 'Success';
-                // //chrome.notifications.create('', opt, function(id) {})
             },
             success: function (response) {
                 const result = requestToObject(open, response);
                 results.push(result);
                 console.log(results);
                 sendResponse(results);
-                //opt.message = 'Error!';
-                //chrome.notifications.create('', opt, function (id) { })
             }
         });
 
