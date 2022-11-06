@@ -55,10 +55,10 @@ chrome.runtime.onMessage.addListener(
                 'content-type': 'application/json'
             }
         })
-            .then(function(response) {
+            .then(function (response) {
                 return response.json();
             })
-            .then(function(responseBodyJson) {
+            .then(function (responseBodyJson) {
                 const result = requestToObject(showNotification, responseBodyJson);
                 results.push(result);
             });
@@ -81,10 +81,10 @@ chrome.runtime.onMessage.addListener(
                 'content-type': 'application/json'
             }
         })
-            .then(function(response) {
+            .then(function (response) {
                 return response.json();
             })
-            .then(function(responseBodyJson) {
+            .then(function (responseBodyJson) {
                 const result = requestToObject(open, responseBodyJson);
                 results.push(result);
                 console.log(results);

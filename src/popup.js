@@ -8,7 +8,7 @@ if (enabled == 'true') {
     document.getElementById('enabled').checked = true;
 }
 
-document.getElementById("targetForm").onsubmit = function(){
+document.getElementById("targetForm").onsubmit = function () {
     localStorage['ip'] = document.getElementById('ip').value;
     localStorage['port'] = document.getElementById('port').value;
     localStorage['enabled'] = document.getElementById('enabled').checked
