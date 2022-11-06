@@ -1,36 +1,36 @@
+function setTarget() {
+    ip = localStorage['ip'] ?? '192.168.1.3';
+    port = localStorage['port'] ?? '80';
+    enabled = localStorage['enabled'] ?? 'true';
+}
+
+function requestToObject(request, response) {
+    return {
+        request: request,
+        response: response
+    };
+}
+
 let ip;
 let port;
 let enabled;
 
-config();
-
-function config() {
-    if (!localStorage['ip']) {
-        localStorage['ip'] = '192.168.1.3';
-    }
-    if (!localStorage['port']) {
-        localStorage['port'] = '80';
-    }
-    if (!localStorage['enabled']) {
-        localStorage['enabled'] = 'true';
-    }
-
-    ip = localStorage['ip'];
-    port = localStorage['port'];
-    enabled = localStorage['enabled'];
-}
+setTarget();
 
 chrome.runtime.onMessage.addListener(
     function (request, sender, sendResponse) {
         console.log(`Message recieved: ${JSON.stringify(request)}`);
 
         if (request.task === 'save') {
-            config();
-            console.log('variables have been updated');
+            setTarget();
+            console.log("The target has been updated.");
+            sendResponse("The target has been updated.");
             return;
         }
 
         if (enabled === 'false') {
+            console.log("AutoPi is disabled, not playing the video.");
+            sendResponse("AutoPi is disabled, not playing the video.");
             return;
         }
 
@@ -45,7 +45,6 @@ chrome.runtime.onMessage.addListener(
         //    iconUrl:'APi128NoGradient.png'
         //};
 
-        //send message to xbmc
         const showNotification = {
             "jsonrpc": "2.0",
             "method": "GUI.ShowNotification",
@@ -59,6 +58,8 @@ chrome.runtime.onMessage.addListener(
 
         const url = `http://${ip}:${port}/jsonrpc`;
 
+        const results = []
+
         $.ajax({
             type: "POST",
             url: url,
@@ -66,16 +67,16 @@ chrome.runtime.onMessage.addListener(
             contentType: "application/json",
             dataType: 'json',
             error: function (response) {
-                console.log(showNotification);
-                console.log(response);
+                const result = requestToObject(showNotification, response);
+                results.push(result);
             },
             success: function (response) {
-                console.log(showNotification);
-                console.log(response);
+                const result = requestToObject(showNotification, response);
+                results.push(result);
             }
         });
 
-        const open = { 
+        const open = {
             "jsonrpc": "2.0",
             "id": 1,
             "method": "Player.Open",
@@ -93,17 +94,26 @@ chrome.runtime.onMessage.addListener(
             contentType: "application/json",
             dataType: 'json',
             error: function (response) {
-                console.log(open)
-                console.log(response);
-                //opt.message = 'Success';
-                //chrome.notifications.create('', opt, function(id) {})
+                const result = requestToObject(open, response);
+                results.push(result);
+                console.log(results);
+                sendResponse(results);
+                // //opt.message = 'Success';
+                // //chrome.notifications.create('', opt, function(id) {})
             },
             success: function (response) {
-                console.log(open);
-                console.log(response);
+                const result = requestToObject(open, response);
+                results.push(result);
+                console.log(results);
+                sendResponse(results);
                 //opt.message = 'Error!';
                 //chrome.notifications.create('', opt, function (id) { })
             }
         });
+
+        // the jquery ajax call is async
+        // in order to send the result to the content script *after* the async work
+        // we must return true here
+        return true;
     }
 )
