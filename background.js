@@ -31,10 +31,11 @@
 //XBMC TVLIST={"jsonrpc": "2.0", "method": "GUI.ActivateWindow", "params": { "window": "video", "parameters": [ "TvShowTitles" ] }, "id": 1 } 
 /////////////////////////////////////////////////////////////////////////////////////
 
-var ip;
-var port;
-var enabled;
-var debug = true; 
+let ip;
+let port;
+let enabled; 
+
+config();
 
 function config(){
      if(!localStorage['ip']) localStorage['ip'] = '192.168.1.3';
@@ -46,80 +47,88 @@ function config(){
      enabled = localStorage['enabled'];
 }
 
-config();
-
 chrome.runtime.onMessage.addListener(
-     function(request, sender, sendResponse) {
-          
-          if(request.task == 'save'){        
-               config();
-               console.log('variables have been figured again.');
-               return;
-          }
-          
-          if(enabled == 'false') return;
-          
-          try{
-               var videoId = GetVideoId(request.location);
-               if(videoId.length == 0) return;
-               
-               
-               //create message on chrome
-               var messageId = '';
-               var opt = {
-                    type: 'list',
-                    title: 'AutoPi',
-                    message: 'Primary message to display',
-                    priority: 1,
-                    items: [{ title: 'Playing:  ', message: videoId}],
-                    iconUrl:'APi128NoGradient.png'
-                };
-               chrome.notifications.create('', opt, function(id) {messageId = id;})                          
-                    
-               //send message to xbmc
-               var address = 'http://' + ip + ':' + port + '/jsonrpc?request={"jsonrpc":"2.0","method":"GUI.ShowNotification","params":{"title":"AutoPi","message":"Playing: ' + videoId + '", "displaytime":15000},"id":1}'
-               $.ajax(address);
+    function(request, sender, sendResponse) {
+        console.log("Message recieved");
 
-               //send url to xbmc
-               opt = {
-                    type: 'list',
-                    title: 'AutoPi',
-                    message: 'Primary message to display',
-                    priority: 1,
-                    items: [{ title: 'Error:  ', message: 'See background page for details.'}],
-                    iconUrl:'APi128NoGradient.jpg'
-                };
-               var rpc = encodeURIComponent('{"jsonrpc":"2.0","id":1,"method":"Player.Open","params":{"item":{"file":"plugin://plugin.video.youtube/?path=/root/video&action=play_video&videoid=' + videoId + '"}}}');
-               rpc = 'http://' + ip + ':' + port + '/jsonrpc?request=' + rpc;
-               $.ajax({
-                    url: rpc, 
-                    error: function(data){
-                         console.log(data);
-                         console.log('http://' + ip + ':' + port + '/jsonrpc?request=');
-                         console.log(encodeURIComponent('{"jsonrpc":"2.0","id":1,"method":"Player.Open","params":{"item":{"file":"plugin://plugin.video.youtube/?path=/root/video&action=play_video&videoid=' + videoId + '"}}}'));
-                         chrome.notifications.create('', opt, function(id) {})
-                    }, 
-                    success: function(data){
-                         console.log(data);
-                         chrome.notifications.clear(messageId, function(){});
-                    }
-               });
-          }          
-          catch(e){
-              console.log(e)
-          }
+        if(request.task === 'save'){
+            config();
+            console.log('variables have been updated');
+            return;
+        }
+          
+        if(enabled === 'false') return;
+          
+        let videoId = GetVideoId(request.location);
+        if(videoId.length === 0) return;
+
+        console.log(`Player vide id: ${videoId}`);
+
+        //create message on chrome
+        //let messageId = '';
+        //let opt = {
+        //    type: 'list',
+        //    title: 'AutoPi',
+        //    message: 'Playing Video',
+        //    priority: 1,
+        //    items: [{ title: 'Playing:  ', message: videoId}],
+        //    iconUrl:'APi128NoGradient.png'
+        //};                         
+
+        //send message to xbmc
+        let showNotification = { "jsonrpc": "2.0", "method": "GUI.ShowNotification", "params": { "title": "AutoPi", "message": `Playing: ${videoId}`, "displaytime": 15000 }, "id": 1 };
+        let url = 'http://' + ip + ':' + port + '/jsonrpc';
+
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: JSON.stringify(showNotification),
+            contentType: "application/json",
+            dataType: 'json',
+            error: function (response) {
+                console.log(showNotification);
+                console.log(response);
+            },
+            success: function (response) {
+                console.log(showNotification);
+                console.log(response);
+            }
+        });
+
+        let open = { "jsonrpc": "2.0", "id": 1, "method": "Player.Open", "params": { "item": { "file": `plugin://plugin.video.youtube/?path=/root/video&action=play_video&videoid=${videoId}` } } };
+
+        $.ajax({
+            type: "POST",
+            url: url, 
+            data: JSON.stringify(open),
+            contentType: "application/json",
+            dataType: 'json',
+            error: function (response) {
+                console.log(open)
+                console.log(response);
+                //opt.message = 'Success';
+                //chrome.notifications.create('', opt, function(id) {})
+            }, 
+            success: function (response) {
+                console.log(open);
+                console.log(response);
+                //opt.message = 'Error!';
+                //chrome.notifications.create('', opt, function (id) { })
+            }
+        });
      }
     
 )		
-     
+
 function GetVideoId(url){
-     var regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-     var match = url.match(regExp);
-     if (match && match[2].length == 11) {
-       return match[2];
-       console.log( match[2]);
-     } else {
-       return ""
-       console.log('null');
-     }    
+    console.log(`The url is ${url}`);
+
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    let match = url.match(regExp);
+
+    if (match && match[2].length === 11) {
+        return match[2];
+    } else {
+        return ""
+    }    
 }
