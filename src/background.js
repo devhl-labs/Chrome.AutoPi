@@ -34,13 +34,6 @@ chrome.runtime.onMessage.addListener(
             return;
         }
 
-        let videoId = getVideoId(request.location);
-        if (!videoId) {
-            return;
-        }
-
-        console.log(`Player video id: ${videoId}`);
-
         //create message on chrome
         //let messageId = '';
         //let opt = {
@@ -58,13 +51,13 @@ chrome.runtime.onMessage.addListener(
             "method": "GUI.ShowNotification",
             "params": {
                 "title": "AutoPi",
-                "message": `Playing: ${videoId}`,
+                "message": `Playing: ${request.play}`,
                 "displaytime": 15000
             },
             "id": 1
         };
 
-        let url = 'http://' + ip + ':' + port + '/jsonrpc';
+        const url = `http://${ip}:${port}/jsonrpc`;
 
         $.ajax({
             type: "POST",
@@ -88,7 +81,7 @@ chrome.runtime.onMessage.addListener(
             "method": "Player.Open",
             "params": {
                 "item": {
-                    "file": `plugin://plugin.video.youtube/?path=/root/video&action=play_video&videoid=${videoId}`
+                    "file": `plugin://plugin.video.youtube/?path=/root/video&action=play_video&videoid=${request.play}`
                 }
             }
         };

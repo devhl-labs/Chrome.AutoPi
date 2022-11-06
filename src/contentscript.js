@@ -18,9 +18,18 @@ function observerCallback() {
 
 function sendRequestToPlayVideo(videoId) {
     console.log(`Requesting to play ${videoId}`);
-    chrome.runtime.sendMessage({ location: document.URL }, function (response) {
+    chrome.runtime.sendMessage({ play: videoId }, function (response) {
         console.log(`Received response of ${response.farewell}`);
     });
+}
+
+function getVideoId(url) {
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    let match = url.match(regExp);
+
+    return match && match[2].length === 11
+        ? match[2]
+        : undefined
 }
 
 let videoId = getVideoId(document.URL);

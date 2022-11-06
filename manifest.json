@@ -5,7 +5,6 @@
   "background": {
     "scripts": [
       "src/jquery-1.7.2.min.js",
-      "src/common.js",
       "src/background.js"
     ]
   },
@@ -25,7 +24,6 @@
         "https://www.youtube.com/*"
       ],
       "js": [
-        "src/common.js",
         "src/contentscript.js"
       ],
       "run_at": "document_start",
