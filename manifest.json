@@ -16,8 +16,7 @@
     }
   },
   "permissions": [
-    "http://*/",
-    "tabs"
+    "http://*/"
   ],
   "content_scripts": [
     {
