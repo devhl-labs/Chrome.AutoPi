@@ -1,7 +1,30 @@
-var url = document.URL;
+function addLocationObserver(callback) {
+    const config = { 
+        childList: true,
+        subtree: true
+    }
 
-console.log(`Sending url ${url}`);
+    const observer = new MutationObserver(callback)
+    observer.observe(document, config)
+}
 
-chrome.runtime.sendMessage({ location: url }, function (response) {
-    console.log(`Received response of ${response.farewell}`);
-});
+function observerCallback() {
+    console.log(`checking ${document.URL}`);
+    const tempVideoId = getVideoId(document.URL);
+    if (videoId != tempVideoId && window.location.href.includes('youtube')) {
+        videoId = tempVideoId;
+        sendRequestToPlayVideo(videoId);
+    }
+}
+
+function sendRequestToPlayVideo(videoId) {
+    console.log(`Requesting to play ${videoId}`);
+    chrome.runtime.sendMessage({ location: document.URL }, function (response) {
+        console.log(`Received response of ${response.farewell}`);
+    });
+}
+
+let videoId = getVideoId(document.URL);
+addLocationObserver(observerCallback);
+observerCallback();
+sendRequestToPlayVideo(videoId);

@@ -34,7 +34,7 @@ chrome.runtime.onMessage.addListener(
             return;
         }
 
-        let videoId = GetVideoId(request.location);
+        let videoId = getVideoId(request.location);
         if (!videoId) {
             return;
         }
@@ -114,14 +114,3 @@ chrome.runtime.onMessage.addListener(
         });
     }
 )
-
-function GetVideoId(url) {
-    console.log(`The url is ${url}`);
-
-    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-    let match = url.match(regExp);
-
-    return match && match[2].length === 11
-        ? match[2]
-        : undefined
-}
