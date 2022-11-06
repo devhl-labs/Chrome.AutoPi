@@ -1,0 +1,26 @@
+http://<username>:<password>@<ip-addr>:<port>/jsonrpc?request={"jsonrpc":"2.0","method":"GUI.ShowNotification","params":{"title":"uTorrent","message":"show is ready"},"id":1}
+
+http://www.raspberrypi.org/forums/viewtopic.php?t=36912&p=406878
+
+http://yourxbmcipaddyhere/jsonrpc?request= + one of the following commands
+XBMC DOWN={"jsonrpc":"2.0","method":"Input.Down","id":1}
+XBMC RIGHT={"jsonrpc":"2.0","method":"Input.Right","id":1}
+XBMC SELECT={"jsonrpc":"2.0","method":"Input.Select","id":1}
+XBMC LEFT={"jsonrpc":"2.0","method":"Input.Left","id":1}
+XBMC INFO={"jsonrpc":"2.0","method":"Input.Info","id":1}
+XBMC HOME={"jsonrpc":"2.0","method":"Input.Home","id":1}
+XBMC UP={"jsonrpc":"2.0","method":"Input.Up","id":1}
+XBMC ContextMenu={"jsonrpc":"2.0","method":"Input.ContextMenu","id":1}
+XBMC 30SecForward={"jsonrpc":"2.0","id":1,"method":"Player.Seek","params":{"playerid":1,"value":"smallforward"}}
+XBMC 30SecBkwd={"jsonrpc":"2.0","id":1,"method":"Player.Seek","params":{"playerid":1,"value":"smallbackward"}}
+XBMC QUIT={"jsonrpc":"2.0","method":"Application.Quit","id":1}
+XBMC BACK={"jsonrpc":"2.0","method":"Input.Back","id":1}
+XBMC PLAYPAUSE {"jsonrpc":"2.0","method":"Player.PlayPause","params":{"playerid":1},"id":1}
+XBMC STOP={"jsonrpc":"2.0","method":"Player.Stop","params":{"playerid":1},"id":1}
+XBMC SUBTITLENEXT={"jsonrpc":"2.0","id":1,"method":"Player.SetSubtitle","params":{"playerid":1,"subtitle":"next"}}
+XBMC SUBTITLEOFF={"jsonrpc":"2.0","id":1,"method":"Player.SetSubtitle","params":{"playerid":1,"subtitle":"off"}}
+XBMC SUBTITLEON={"jsonrpc":"2.0","id":1,"method":"Player.SetSubtitle","params":{"playerid":1,"subtitle":"off"}}
+XBMC SHOWOSD={"jsonrpc":"2.0","method":"Input.ShowOSD","id":1}
+XBMC SETFULLSCREEN={"jsonrpc": "2.0", "method": "GUI.SetFullscreen", "params": { "fullscreen": "toggle" }, "id": "1"}
+XBMC MOVIESLIST={ "jsonrpc": "2.0", "method": "GUI.ActivateWindow", "params": { "window": "video", "parameters": [ "MovieTitles" ] }, "id": 1 }
+XBMC TVLIST={"jsonrpc": "2.0", "method": "GUI.ActivateWindow", "params": { "window": "video", "parameters": [ "TvShowTitles" ] }, "id": 1 } 
