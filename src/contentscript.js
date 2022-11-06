@@ -32,6 +32,8 @@ function getVideoId() {
         : undefined
 }
 
-let videoId = getVideoId(document.URL);
 addLocationObserver(observerCallback);
-sendRequestToPlayVideo(videoId);
+let videoId = getVideoId(document.URL);
+if (videoId) {
+    sendRequestToPlayVideo(videoId);
+}
