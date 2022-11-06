@@ -1,6 +1,6 @@
 //////////////////////////*****************
 //  http://<username>:<password>@<ip-addr>:<port>/jsonrpc?request={"jsonrpc":"2.0","method":"GUI.ShowNotification","params":{"title":"uTorrent","message":"show is ready"},"id":1}
-//   
+//
 
 
 
@@ -33,34 +33,34 @@
 
 let ip;
 let port;
-let enabled; 
+let enabled;
 
 config();
 
-function config(){
-     if(!localStorage['ip']) localStorage['ip'] = '192.168.1.3';
-     if(!localStorage['port']) localStorage['port'] = '80';
-     if(!localStorage['enabled']) localStorage['enabled'] ='true';
+function config() {
+    if (!localStorage['ip']) localStorage['ip'] = '192.168.1.3';
+    if (!localStorage['port']) localStorage['port'] = '80';
+    if (!localStorage['enabled']) localStorage['enabled'] = 'true';
 
-     ip = localStorage['ip'];
-     port = localStorage['port'];
-     enabled = localStorage['enabled'];
+    ip = localStorage['ip'];
+    port = localStorage['port'];
+    enabled = localStorage['enabled'];
 }
 
 chrome.runtime.onMessage.addListener(
-    function(request, sender, sendResponse) {
+    function (request, sender, sendResponse) {
         console.log("Message recieved");
 
-        if(request.task === 'save'){
+        if (request.task === 'save') {
             config();
             console.log('variables have been updated');
             return;
         }
-          
-        if(enabled === 'false') return;
-          
+
+        if (enabled === 'false') return;
+
         let videoId = GetVideoId(request.location);
-        if(videoId.length === 0) return;
+        if (videoId.length === 0) return;
 
         console.log(`Player vide id: ${videoId}`);
 
@@ -73,7 +73,7 @@ chrome.runtime.onMessage.addListener(
         //    priority: 1,
         //    items: [{ title: 'Playing:  ', message: videoId}],
         //    iconUrl:'APi128NoGradient.png'
-        //};                         
+        //};
 
         //send message to xbmc
         let showNotification = { "jsonrpc": "2.0", "method": "GUI.ShowNotification", "params": { "title": "AutoPi", "message": `Playing: ${videoId}`, "displaytime": 15000 }, "id": 1 };
@@ -99,7 +99,7 @@ chrome.runtime.onMessage.addListener(
 
         $.ajax({
             type: "POST",
-            url: url, 
+            url: url,
             data: JSON.stringify(open),
             contentType: "application/json",
             dataType: 'json',
@@ -108,7 +108,7 @@ chrome.runtime.onMessage.addListener(
                 console.log(response);
                 //opt.message = 'Success';
                 //chrome.notifications.create('', opt, function(id) {})
-            }, 
+            },
             success: function (response) {
                 console.log(open);
                 console.log(response);
@@ -116,11 +116,10 @@ chrome.runtime.onMessage.addListener(
                 //chrome.notifications.create('', opt, function (id) { })
             }
         });
-     }
-    
-)		
+    }
+)
 
-function GetVideoId(url){
+function GetVideoId(url) {
     console.log(`The url is ${url}`);
 
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
@@ -130,5 +129,5 @@ function GetVideoId(url){
         return match[2];
     } else {
         return ""
-    }    
+    }
 }
