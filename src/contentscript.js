@@ -1,7 +1,7 @@
 var url = document.URL;
 
-console.log(url);
+console.log(`Sending url ${url}`);
 
 chrome.runtime.sendMessage({ location: url }, function (response) {
-  //console.log(response.farewell);
+    console.log(`Received response of ${response.farewell}`);
 });
