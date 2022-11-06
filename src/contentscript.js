@@ -9,8 +9,8 @@ function addLocationObserver(callback) {
 }
 
 function observerCallback() {
-    const tempVideoId = getVideoId(document.URL);
-    if (videoId != tempVideoId && window.location.href.includes('youtube')) {
+    const tempVideoId = getVideoId();
+    if (tempVideoId && videoId != tempVideoId) {
         videoId = tempVideoId;
         sendRequestToPlayVideo(videoId);
     }
@@ -23,9 +23,9 @@ function sendRequestToPlayVideo(videoId) {
     });
 }
 
-function getVideoId(url) {
+function getVideoId() {
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-    let match = url.match(regExp);
+    let match = document.URL.match(regExp);
 
     return match && match[2].length === 11
         ? match[2]
