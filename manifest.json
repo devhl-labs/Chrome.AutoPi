@@ -11,7 +11,7 @@
     "default_title": "Auto Pi",
     "default_popup": "src/popup.html",
     "default_icon": {
-      "19": "docs/APi19.png"
+      "19": "src/images/APi19.png"
     }
   },
   "permissions": [
@@ -31,8 +31,8 @@
   ],
   "manifest_version": 2,
   "icons": {
-    "128": "docs/APi128.png",
-    "48": "docs/APi48.png",
-    "16": "docs/APi16.png"
+    "128": "src/images/APi128.png",
+    "48": "src/images/APi48.png",
+    "16": "src/images/APi16.png"
   }
 }
