@@ -1,14 +1,9 @@
 function setTarget() {
-    ip = localStorage['ip'] ?? '192.168.1.3';
-    port = localStorage['port'] ?? '80';
+    ip = localStorage['ip'] ?? '';
+    port = localStorage['port'] ?? '';
     enabled = localStorage['enabled'] ?? 'true';
-}
-
-function requestToObject(request, response) {
-    return {
-        request: request,
-        response: response
-    };
+    user = localStorage['user'] ?? '';
+    password = localStorage["password"] ?? '';
 }
 
 let ip;
@@ -41,6 +36,12 @@ chrome.runtime.onMessage.addListener(
             return;
         }
 
+        if (!ip || !port) {
+            console.log("AutoPi could not send the request because the ip address and port were not provided.");
+            sendResponse("AutoPi could not send the request because the ip address and port were not provided.");
+            return;
+        }
+
         lastPlayedVideoId = request.play;
 
         const showNotification = {
@@ -58,20 +59,22 @@ chrome.runtime.onMessage.addListener(
 
         results = []
 
+        const headers = {'content-type': 'application/json' }
+
+        const authorization = user && password ? btoa(`${user}:${password}`) : "";
+
+        if (authorization) {
+            headers["Authorization"] = `Basic ${authorization}`
+        }
+
         fetch(url, {
             method: 'POST',
             body: JSON.stringify(showNotification),
-            headers: {
-                'content-type': 'application/json'
-            }
+            headers: headers
         })
-            .then(function (response) {
-                return response.json();
-            })
-            .then(function (responseBodyJson) {
-                const result = requestToObject(showNotification, responseBodyJson);
-                results.push(result);
-            });
+        .then(function (response) {
+            results.push(response.status)
+        })
 
         const open = {
             "jsonrpc": "2.0",
@@ -87,19 +90,11 @@ chrome.runtime.onMessage.addListener(
         fetch(url, {
             method: 'POST',
             body: JSON.stringify(open),
-            headers: {
-                'content-type': 'application/json'
-            }
+            headers: headers
         })
-            .then(function (response) {
-                return response.json();
-            })
-            .then(function (responseBodyJson) {
-                const result = requestToObject(open, responseBodyJson);
-                results.push(result);
-                console.log(results);
-                sendResponse(results);
-            });
+        .then(function (response) {
+            results.push(response.status)
+        })
 
         // we must return true here to send the result to the content script *after* the async work
         return true;
