@@ -1,6 +1,6 @@
 {
   "name": "AutoPi",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Pushes YouTube videos to Kodi.",
   "background": {
     "service_worker": "src/background.js"
