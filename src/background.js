@@ -1,48 +1,40 @@
-function setTarget() {
-    ip = localStorage['ip'] ?? '';
-    port = localStorage['port'] ?? '';
-    enabled = localStorage['enabled'] ?? 'true';
-    user = localStorage['user'] ?? '';
-    password = localStorage["password"] ?? '';
-}
-
 let ip;
 let port;
 let enabled;
-let lastPlayedVideoId;
-setTarget();
+let user;
+let password;
 
-let results = [];
+chrome.storage.local.get(["ip", "port", "enabled", "user", "password"]).then((result) => {
+    ip = result.ip ?? '';
+    port = result.port ?? '';
+    user = result.user ?? '';
+    enabled = result.enabled ?? 'true';
+    password = result.password ?? '';
+});
 
 chrome.runtime.onMessage.addListener(
     function (request, sender, sendResponse) {
         console.log(request);
 
         if (request.task === 'save') {
-            setTarget();
+            ip = request.ip;
+            port = request.port;
+            enabled = request.enabled;
+            user = request.user;
+            password = request.password;
             console.log("The target has been updated.");
-            sendResponse("The target has been updated.");
-            return;
-        }
-
-        if (request.task === 'lastRequest') {
-            sendResponse({ "videoId": lastPlayedVideoId, "requests": results });
             return;
         }
 
         if (enabled === 'false') {
             console.log("AutoPi is disabled, not playing the video.");
-            sendResponse("AutoPi is disabled, not playing the video.");
             return;
         }
 
         if (!ip || !port) {
             console.log("AutoPi could not send the request because the ip address and port were not provided.");
-            sendResponse("AutoPi could not send the request because the ip address and port were not provided.");
             return;
         }
-
-        lastPlayedVideoId = request.play;
 
         const showNotification = {
             "jsonrpc": "2.0",
@@ -56,8 +48,6 @@ chrome.runtime.onMessage.addListener(
         };
 
         const url = `http://${ip}:${port}/jsonrpc`;
-
-        results = []
 
         const headers = {'content-type': 'application/json' }
 
@@ -73,7 +63,8 @@ chrome.runtime.onMessage.addListener(
             headers: headers
         })
         .then(function (response) {
-            results.push(response.status)
+            console.log(response);
+            chrome.storage.local.set({ notification: response.status });
         })
 
         const open = {
@@ -93,7 +84,8 @@ chrome.runtime.onMessage.addListener(
             headers: headers
         })
         .then(function (response) {
-            results.push(response.status)
+            console.log(response);
+            chrome.storage.local.set({ play: response.status, video: request.play });
         })
 
         // we must return true here to send the result to the content script *after* the async work

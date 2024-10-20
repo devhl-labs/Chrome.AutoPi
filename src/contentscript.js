@@ -19,9 +19,7 @@ function observerCallback() {
 function sendRequestToPlayVideo(videoId) {
     if (videoId) {
         console.log(`Requesting to play ${videoId}`);
-        chrome.runtime.sendMessage({ play: videoId }, function (response) {
-            console.log(response);
-        });
+        chrome.runtime.sendMessage({ play: videoId });
     }
 }
 
